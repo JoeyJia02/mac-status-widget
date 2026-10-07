@@ -1,0 +1,4 @@
+# 开发检查
+
+`widget-render-tests.cjs` 使用已安装 Übersicht 自带的 Node、React 和 Babel，检查状态标签、颜色类和布局。
+此目录用于开发验证，无需复制到 Übersicht 组件目录。
