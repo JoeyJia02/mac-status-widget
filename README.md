@@ -11,6 +11,8 @@ A compact Chinese desktop status widget for macOS, built with Übersicht. Shows 
 - 系统 APFS 容器可用容量，空间偏低时黄红提醒。
 - 活跃物理网络接口的上下行速率。
 - 读取失败、首次网速采样或状态不明时显示“未知”。
+- 标题小点汇总内存压力和存储状态：正常绿、偏紧黄、严重红、未知灰。
+- 点击卡片打开 macOS“活动监视器”，也支持卡片获得焦点后按 Enter 或空格。
 
 这是个人分享的小组件，没有 CPU/GPU、历史图表、通知或图形设置界面。
 
@@ -25,6 +27,14 @@ A compact Chinese desktop status widget for macOS, built with Übersicht. Shows 
 
 停用：将 `mac-status` 移出 Übersicht 的组件文件夹。
 
+## 打开活动监视器
+
+点击卡片任意位置即可打开或切换到活动监视器。卡片底部有“活动监视器 ↗”提示；打开失败会显示提示，不影响采集。
+
+交互已按 Übersicht 1.6 验证 API 和编译。如果卡片无法接收点击，请确认 Übersicht 的 **Enable interaction** 已开启，并且本卡片没有使用 **Send to Background**。旧版宿主的交互方式可能不同。
+
+此功能仅在点击或按键时，通过 Übersicht 的 `run()` 执行固定命令 `/usr/bin/open -b com.apple.ActivityMonitor`；采样时不会自动打开应用，也不修改系统权限。
+
 ## 调整外观和阈值
 
 编辑 `mac-status/index.jsx`：
@@ -36,6 +46,8 @@ A compact Chinese desktop status widget for macOS, built with Übersicht. Shows 
 磁盘阈值是本组件的提醒规则，不是 macOS 系统压力标准。比例与容量可自行修改；GiB = 1,073,741,824 字节。
 
 内存状态依据只读 `kern.memorystatus_vm_pressure_level` 的 1/2/4 值，分别显示绿色正常、黄色偏高、红色严重。未知输出保持灰蓝。不会依据内存占用百分比推算压力。[Apple 内核转换逻辑](https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/kern_memorystatus_notify.c#L1651) / [用户态标志定义](https://github.com/apple-oss-distributions/xnu/blob/xnu-8792.81.2/bsd/sys/event.h#L491)。
+
+标题小点优先显示已知的严重或偏紧状态；只有内存压力和存储状态都正常时才显示绿色，其余状态未知时显示灰色。它不判断互联网是否可达，也不把网速高低当作告警。
 
 ## 指标口径
 
@@ -56,7 +68,7 @@ A compact Chinese desktop status widget for macOS, built with Übersicht. Shows 
 /bin/sh mac-status/collect.sh
 ```
 
-52 项测试覆盖解析、APFS 容器选择、网卡去重、离线/长间隔、黄红阈值与未知值、子进程失败/超时和 plist 解析。在已安装 Übersicht 的 Mac 上，可选运行 11 项 React 渲染检查：
+52 项测试覆盖解析、APFS 容器选择、网卡去重、离线/长间隔、黄红阈值与未知值、子进程失败/超时和 plist 解析。在已安装 Übersicht 的 Mac 上，可选运行 36 项 React 渲染与交互检查，包含小点汇总、点击/键盘触发和打开失败处理：
 
 ```sh
 "/Applications/Übersicht.app/Contents/Resources/node-arm64" tools/widget-render-tests.cjs
