@@ -4,6 +4,8 @@
 
 A compact Chinese desktop status widget for macOS, built with Übersicht. Shows memory, APFS free space, and network throughput with resource status colors.
 
+<img src="assets/mac-status-widget.png" alt="Mac 状态卡片截图：内存压力、存储空间和实时网速" width="360">
+
 ## 功能
 
 - 每 5 秒采样，显示采样时间。
